@@ -7,7 +7,7 @@ on:
       - 'lib/**'
       - 'web/**'
       - 'pubspec.yaml'
-      - '.github/workflows/deploy_web.yml'
+      - '.github/workflows/deploy_web.yaml'
   workflow_dispatch:
 
 permissions:
@@ -38,7 +38,6 @@ jobs:
 
       - name: Build web
         run: flutter build web --wasm --base-href /${{ github.event.repository.name }}/
-        working-directory: example
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
