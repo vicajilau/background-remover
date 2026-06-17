@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:desktop_drop/desktop_drop.dart';
 
 import 'core/image_processor.dart';
 import 'ui/theme.dart';
@@ -54,6 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _isEyedropperActive = false;
   String _viewMode = 'split'; // 'split', 'original', 'processed'
   String _previewBackground = 'transparent'; // 'transparent', 'white', 'black'
+  bool _isDragging = false;
 
   int _processCounter = 0;
   final GlobalKey _previewKey = GlobalKey();
@@ -69,12 +72,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (result == null) return;
 
       final Uint8List bytes = await result.xFile.readAsBytes();
+      await _loadImage(bytes, result.xFile.name);
+    } catch (e) {
+      _showSnackBar('Error loading image: ${e.toString()}', isError: true);
+    }
+  }
 
+  /// Loads and decodes the image bytes, then triggers processing.
+  Future<void> _loadImage(Uint8List bytes, String fileName) async {
+    try {
       setState(() {
         _isProcessing = true;
         _originalBytes = bytes;
         _processedBytes = null;
-        _fileName = result.xFile.name;
+        _fileName = fileName;
         _isEyedropperActive = false;
       });
 
@@ -296,25 +307,142 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.surfaceGradient),
-        child: _originalBytes == null
-            ? _buildUploadPrompt()
-            : isDesktop
-            ? Row(
-                children: [
-                  Expanded(flex: 3, child: _buildPreviewArea()),
-                  Container(width: 1, color: const Color(0xFF334155)),
-                  SizedBox(width: 380, child: _buildControlsPanel()),
-                ],
-              )
-            : Column(
-                children: [
-                  Expanded(flex: 5, child: _buildPreviewArea()),
-                  Container(height: 1, color: const Color(0xFF334155)),
-                  Expanded(flex: 6, child: _buildControlsPanel()),
+      body: DropTarget(
+        onDragEntered: (detail) {
+          setState(() {
+            _isDragging = true;
+          });
+        },
+        onDragExited: (detail) {
+          setState(() {
+            _isDragging = false;
+          });
+        },
+        onDragDone: (detail) async {
+          setState(() {
+            _isDragging = false;
+          });
+          if (detail.files.isNotEmpty) {
+            final file = detail.files.first;
+            final name = file.name.toLowerCase();
+            final hasValidExtension = name.endsWith('.png') ||
+                name.endsWith('.jpg') ||
+                name.endsWith('.jpeg') ||
+                name.endsWith('.webp');
+            
+            final mimeType = file.mimeType?.toLowerCase();
+            final hasValidMimeType = mimeType != null && (
+                mimeType == 'image/png' ||
+                mimeType == 'image/jpeg' ||
+                mimeType == 'image/webp'
+            );
+
+            if (hasValidExtension || hasValidMimeType) {
+              try {
+                final bytes = await file.readAsBytes();
+                await _loadImage(bytes, file.name);
+              } catch (e) {
+                _showSnackBar('Error loading dropped file: ${e.toString()}', isError: true);
+              }
+            } else {
+              _showSnackBar(
+                'Unsupported file format. Please drop PNG, JPG, JPEG, or WebP.',
+                isError: true,
+              );
+            }
+          }
+        },
+        child: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(gradient: AppTheme.surfaceGradient),
+              child: _originalBytes == null
+                  ? _buildUploadPrompt()
+                  : isDesktop
+                  ? Row(
+                      children: [
+                        Expanded(flex: 3, child: _buildPreviewArea()),
+                        Container(width: 1, color: const Color(0xFF334155)),
+                        SizedBox(width: 380, child: _buildControlsPanel()),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Expanded(flex: 5, child: _buildPreviewArea()),
+                        Container(height: 1, color: const Color(0xFF334155)),
+                        Expanded(flex: 6, child: _buildControlsPanel()),
+                      ],
+                    ),
+            ),
+            if (_isDragging) _buildDragOverlay(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDragOverlay() {
+    return Positioned.fill(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          color: AppTheme.surfaceDark.withAlpha(180),
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(40),
+              decoration: BoxDecoration(
+                color: AppTheme.surface.withAlpha(120),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: AppTheme.primary,
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withAlpha(40),
+                    blurRadius: 24,
+                    spreadRadius: 4,
+                  ),
                 ],
               ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withAlpha(30),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.file_upload_rounded,
+                      size: 64,
+                      color: AppTheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Drop your image here',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Supports PNG, JPG, JPEG, and WebP formats',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
