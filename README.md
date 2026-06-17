@@ -1,7 +1,7 @@
 # Background Remover
 
 <p align="center">
-  <!-- <img src=".github/assets/logo.png" alt="Background Remover Logo" width="160"><br><br> -->
+  <img src=".github/assets/logo.png" alt="Background Remover Logo" width="160"><br><br>
   <img src="https://github.com/vicajilau/background-remover/actions/workflows/ci.yml/badge.svg" alt="CI Status">
 </p>
 
