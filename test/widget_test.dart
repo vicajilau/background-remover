@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:cross_file/cross_file.dart';
 import 'package:background_remover/main.dart';
+import 'package:background_remover/ui/screens/dashboard_screen.dart';
 
 void main() {
   testWidgets('Smoke test background remover app launch', (
@@ -32,31 +33,40 @@ void main() {
 
     // Load image via XFile
     final file = XFile.fromData(bytes, name: 'test.png');
-    await state.loadImage(file);
+    await tester.runAsync(() async {
+      await state.loadImage(file);
+      while (state.isProcessing) {
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+    });
     await tester.pumpAndSettle();
 
     // Verify initial values
-    expect(state._threshold, 30.0);
-    expect(state._smoothness, 20.0);
+    expect(state.threshold, 30.0);
+    expect(state.smoothness, 20.0);
 
     // Modify values
-    state.setState(() {
-      state._threshold = 100.0;
-      state._smoothness = 80.0;
-    });
+    state.threshold = 100.0;
+    state.smoothness = 80.0;
     await tester.pump();
 
-    expect(state._threshold, 100.0);
-    expect(state._smoothness, 80.0);
+    expect(state.threshold, 100.0);
+    expect(state.smoothness, 80.0);
 
     // Find and tap reset button
     final resetButton = find.byTooltip('Reset adjustments');
     expect(resetButton, findsOneWidget);
-    await tester.tap(resetButton);
+
+    await tester.runAsync(() async {
+      await tester.tap(resetButton);
+      while (state.isProcessing) {
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+    });
     await tester.pumpAndSettle();
 
     // Verify values are reset
-    expect(state._threshold, 30.0);
-    expect(state._smoothness, 20.0);
+    expect(state.threshold, 30.0);
+    expect(state.smoothness, 20.0);
   });
 }

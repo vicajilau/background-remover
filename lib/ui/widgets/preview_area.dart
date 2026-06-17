@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
+import 'package:background_remover/core/image_processor.dart';
 import 'checkerboard.dart';
 import 'split_slider.dart';
 
@@ -8,13 +8,14 @@ import 'split_slider.dart';
 class PreviewArea extends StatelessWidget {
   final Uint8List originalBytes;
   final Uint8List? processedBytes;
-  final img.Image? decodedImg;
+  final DecodedImage? decodedImg;
   final double imageWidth;
   final double imageHeight;
   final String viewMode;
   final String previewBackground;
   final bool isEyedropperActive;
   final bool isProcessing;
+  final String loadingStatus;
   final void Function(Offset localOffset, Size containerSize) onPickColorAt;
 
   const PreviewArea({
@@ -28,6 +29,7 @@ class PreviewArea extends StatelessWidget {
     required this.previewBackground,
     required this.isEyedropperActive,
     required this.isProcessing,
+    required this.loadingStatus,
     required this.onPickColorAt,
   });
 
@@ -172,18 +174,21 @@ class PreviewArea extends StatelessWidget {
                 color: Colors.black.withAlpha(200),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
-                    'Processing...',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    loadingStatus.isNotEmpty ? loadingStatus : 'Processing...',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),

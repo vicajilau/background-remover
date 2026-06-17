@@ -286,13 +286,16 @@ class ControlsPanel extends StatelessWidget {
                 shadowColor: Colors.transparent,
                 minimumSize: const Size.fromHeight(56),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.download_rounded),
-                  SizedBox(width: 10),
-                  Text('Save Transparent PNG'),
-                ],
+              child: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.download_rounded),
+                    SizedBox(width: 10),
+                    Text('Save Transparent PNG'),
+                  ],
+                ),
               ),
             ),
           ),
@@ -302,13 +305,16 @@ class ControlsPanel extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(56),
             ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.folder_open),
-                SizedBox(width: 10),
-                Text('Open Another Image'),
-              ],
+            child: const FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.folder_open),
+                  SizedBox(width: 10),
+                  Text('Open Another Image'),
+                ],
+              ),
             ),
           ),
         ],

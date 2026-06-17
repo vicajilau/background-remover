@@ -1,11 +1,12 @@
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:background_remover/core/image_processor.dart';
 
 void main() {
   group('ImageProcessor Tests', () {
-    test('removeBackground removes matching colors', () {
+    test('removeBackground removes matching colors', () async {
       // Create a 2x2 test image: top-left is red, others are green
       final testImage = img.Image(width: 2, height: 2, numChannels: 3);
 
@@ -18,14 +19,12 @@ void main() {
       final pngBytes = Uint8List.fromList(img.encodePng(testImage));
 
       // Process removal targeting red
-      final resultBytes = ImageProcessor.removeBackground({
-        'bytes': pngBytes,
-        'r': 255,
-        'g': 0,
-        'b': 0,
-        'threshold': 10.0,
-        'smoothness': 0.0,
-      });
+      final resultBytes = await ImageProcessor.removeBackground(
+        bytes: pngBytes,
+        color: const Color(0xFFFF0000),
+        threshold: 10.0,
+        smoothness: 0.0,
+      );
 
       // Decode processed result
       final resultImage = img.decodeImage(resultBytes);
