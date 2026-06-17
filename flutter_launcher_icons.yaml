@@ -1,0 +1,16 @@
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: ".github/assets/logo.png"
+  web:
+    generate: true
+    image_path: ".github/assets/logo.png"
+    background_color: "#ffffff"
+    theme_color: "#1e293b"
+  windows:
+    generate: true
+    image_path: ".github/assets/logo.png"
+  macos:
+    generate: true
+    image_path: ".github/assets/logo.png"
