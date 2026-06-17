@@ -2,8 +2,8 @@
 
 <p align="center">
   <img src=".github/assets/logo_transparent.png" alt="Background Remover Logo" width="160"><br><br>
-  <img src="https://github.com/vicajilau/background-remover/actions/workflows/ci.yml/badge.svg" alt="CI Status">
-  <img src="https://github.com/vicajilau/background-remover/actions/workflows/deploy_web.yml/badge.svg" alt="Web CD Status">
+  <img src="https://github.com/vicajilau/background-remover/actions/workflows/ci.yaml/badge.svg" alt="CI Status">
+  <img src="https://github.com/vicajilau/background-remover/actions/workflows/deploy_web.yaml/badge.svg" alt="Web CD Status">
 </p>
 
 The open-source companion for all your image processing needs in Flutter. 
