@@ -21,6 +21,41 @@ Background Remover automatically extracts subjects and generates transparent bac
 
 ---
 
+## ⚙️ How It Works & Architecture
+
+To achieve smooth, high-performance background removal without freezing the user interface (UI), the application implements a **dual-architecture image processing pipeline** using conditional compilation:
+
+```mermaid
+graph TD
+    A[Image Input] --> B{Platform?}
+    B -- Native (iOS/Android/Desktop) --> C[Isolate-based Processor]
+    C --> C1["compute() with package:image"]
+    C1 --> C2[Background Isolate Thread]
+    C2 --> C3[RGB Distance + Smooth Gradient Filter]
+    C3 --> F[Processed PNG bytes]
+    
+    B -- Web --> D[Browser Canvas Processor]
+    D --> D1["package:web + JS Interop"]
+    D1 --> D2["Browser GPU/C++ Decoding (ImageElement)"]
+    D2 --> D3[In-place Typed Array Pixel Processing]
+    D3 --> D4["canvas.toBlob() (Async Browser compression)"]
+    D4 --> F
+```
+
+### 📱 Native Platforms (iOS, Android & Desktop)
+For native platforms, CPU-bound image operations are executed on background threads:
+* **Background Isolates**: The app uses Flutter's `compute` utility to decode the image and apply the background removal filters on a separate native thread (Isolate).
+* **Pure Dart Processing**: The pixels are evaluated and modified using the `image` package in pure Dart, ensuring consistent result accuracy across all operating systems.
+* **Responsive UI**: Because the heavy computing is offloaded from the main UI thread, animations and transitions remain completely fluid (60fps/120fps).
+
+### 🌐 Web Platform
+Since browser JavaScript runs in a single-threaded environment, standard `compute` runs synchronously on the main thread, which can easily freeze the browser UI. To solve this, a specialized web processor is loaded conditionally:
+* **Native Browser Decoder**: We decode the uploaded image using the browser's hardware-accelerated `HTMLImageElement` in milliseconds.
+* **Canvas Pixel Manipulation**: The decoded pixels are drawn to an off-screen `HTMLCanvasElement`. The app processes the pixels in-place inside the browser's optimized memory using a Dart `Uint8ClampedList` view of the JS typed array (`JSUint8ClampedArray`).
+* **Asynchronous PNG Compression**: Rather than performing slow Dart-based PNG compression, we offload PNG creation back to the browser using the asynchronous `canvas.toBlob(...)` API. The browser compresses the image in its internal C++ thread pool, keeping the main tab responsive and resulting in near-instant processing.
+
+---
+
 ## ✨ The User Experience (UX)
 
 1. **Simple Selection:** Choose any photo from your device's gallery or take a new one directly from the app.
