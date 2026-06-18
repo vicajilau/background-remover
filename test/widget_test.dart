@@ -114,4 +114,3 @@ void main() {
     expect(newCenter.dx, greaterThan(initialCenter.dx));
   });
 }
-

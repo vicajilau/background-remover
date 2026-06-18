@@ -18,7 +18,8 @@ class _SplitClipper extends CustomClipper<Rect> {
 
   @override
   bool shouldReclip(covariant _SplitClipper oldClipper) {
-    return oldClipper.splitRatio != splitRatio || oldClipper.clipLeft != clipLeft;
+    return oldClipper.splitRatio != splitRatio ||
+        oldClipper.clipLeft != clipLeft;
   }
 }
 
@@ -81,7 +82,10 @@ class _SplitSliderState extends State<SplitSlider> {
                   // 1. Original Image (Right side / Clipped Background)
                   Positioned.fill(
                     child: ClipRect(
-                      clipper: _SplitClipper(splitRatio: _splitRatio, clipLeft: false),
+                      clipper: _SplitClipper(
+                        splitRatio: _splitRatio,
+                        clipLeft: false,
+                      ),
                       child: widget.original,
                     ),
                   ),
@@ -89,7 +93,10 @@ class _SplitSliderState extends State<SplitSlider> {
                   // 2. Processed Image (Left side / Clipped Foreground)
                   Positioned.fill(
                     child: ClipRect(
-                      clipper: _SplitClipper(splitRatio: _splitRatio, clipLeft: true),
+                      clipper: _SplitClipper(
+                        splitRatio: _splitRatio,
+                        clipLeft: true,
+                      ),
                       child: widget.processed,
                     ),
                   ),
