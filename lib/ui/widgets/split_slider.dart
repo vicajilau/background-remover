@@ -43,6 +43,8 @@ class SplitSlider extends StatefulWidget {
 
 class _SplitSliderState extends State<SplitSlider> {
   double _splitRatio = 0.5; // Starts in the middle
+  bool _isHovering = false;
+  bool _isDragging = false;
 
   void _handleDrag(DragUpdateDetails details, double width) {
     setState(() {
@@ -53,6 +55,7 @@ class _SplitSliderState extends State<SplitSlider> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isInteractive = _isHovering || _isDragging;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -74,8 +77,11 @@ class _SplitSliderState extends State<SplitSlider> {
             width: finalWidth,
             height: finalHeight,
             child: GestureDetector(
+              onHorizontalDragStart: (_) => setState(() => _isDragging = true),
               onHorizontalDragUpdate: (details) =>
                   _handleDrag(details, finalWidth),
+              onHorizontalDragEnd: (_) => setState(() => _isDragging = false),
+              onHorizontalDragCancel: () => setState(() => _isDragging = false),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -106,33 +112,129 @@ class _SplitSliderState extends State<SplitSlider> {
                     left: finalWidth * _splitRatio - 1.5,
                     top: 0,
                     bottom: 0,
-                    child: Container(width: 3, color: Colors.white),
+                    child: Container(
+                      width: 3,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
-                  // 4. Slider Handle Button
-                  Positioned(
-                    left: finalWidth * _splitRatio - 20,
-                    top: finalHeight / 2 - 20,
+                  // 4. Slider Handle Button with Micro-animations
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeOutCubic,
+                    left: finalWidth * _splitRatio - (isInteractive ? 23 : 20),
+                    top: finalHeight / 2 - (isInteractive ? 23 : 20),
+                    width: isInteractive ? 46 : 40,
+                    height: isInteractive ? 46 : 40,
                     child: MouseRegion(
                       cursor: SystemMouseCursors.resizeLeftRight,
-                      child: Container(
-                        width: 40,
-                        height: 40,
+                      onEnter: (_) => setState(() => _isHovering = true),
+                      onExit: (_) => setState(() => _isHovering = false),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeOutCubic,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isInteractive
+                                ? theme.primaryColor
+                                : Colors.transparent,
+                            width: 2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withAlpha(80),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                              color: isInteractive
+                                  ? theme.primaryColor.withValues(alpha: 0.4)
+                                  : Colors.black.withAlpha(80),
+                              blurRadius: isInteractive ? 14 : 8,
+                              offset: Offset(0, isInteractive ? 4 : 2),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.unfold_more_rounded,
-                          color: theme.primaryColor,
-                          size: 24,
+                        child: RotatedBox(
+                          quarterTurns: 1,
+                          child: Icon(
+                            Icons.unfold_more_rounded,
+                            color: isInteractive
+                                ? theme.primaryColor
+                                : theme.primaryColor.withValues(alpha: 0.8),
+                            size: isInteractive ? 26 : 24,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // 5. Floating Labels (Original / Processed) that fade on interaction
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: AnimatedOpacity(
+                      opacity: isInteractive ? 0.0 : 1.0,
+                      duration: const Duration(milliseconds: 250),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Text(
+                          'PROCESSED',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: AnimatedOpacity(
+                      opacity: isInteractive ? 0.0 : 1.0,
+                      duration: const Duration(milliseconds: 250),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Text(
+                          'ORIGINAL',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.2,
+                          ),
                         ),
                       ),
                     ),
