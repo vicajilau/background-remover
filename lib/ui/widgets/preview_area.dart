@@ -13,6 +13,7 @@ class PreviewArea extends StatefulWidget {
   final double imageHeight;
   final String viewMode;
   final String previewBackground;
+  final Color customPreviewColor;
   final bool isEyedropperActive;
   final bool isProcessing;
   final String loadingStatus;
@@ -27,6 +28,7 @@ class PreviewArea extends StatefulWidget {
     required this.imageHeight,
     required this.viewMode,
     required this.previewBackground,
+    required this.customPreviewColor,
     required this.isEyedropperActive,
     required this.isProcessing,
     required this.loadingStatus,
@@ -143,9 +145,15 @@ class _PreviewAreaState extends State<PreviewArea>
             child: widget.previewBackground == 'transparent'
                 ? const Checkerboard()
                 : Container(
-                    color: widget.previewBackground == 'white'
-                        ? Colors.white
-                        : Colors.black,
+                    color: switch (widget.previewBackground) {
+                      'white' => Colors.white,
+                      'black' => Colors.black,
+                      'red' => const Color(0xFFEF4444), // Tailwind Red 500
+                      'green' => const Color(0xFF22C55E), // Tailwind Green 500
+                      'blue' => const Color(0xFF3B82F6), // Tailwind Blue 500
+                      'custom' => widget.customPreviewColor,
+                      _ => Colors.transparent,
+                    },
                   ),
           ),
 

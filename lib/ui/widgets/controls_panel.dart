@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../theme.dart';
+import 'custom_color_picker_dialog.dart';
 
 /// Sidebar or bottom panel for image adjustments and settings controls.
 class ControlsPanel extends StatelessWidget {
@@ -20,6 +21,8 @@ class ControlsPanel extends StatelessWidget {
   final ValueChanged<double> onSmoothnessChangeEnd;
   final String previewBackground;
   final ValueChanged<String> onBackgroundChanged;
+  final Color customPreviewColor;
+  final ValueChanged<Color> onCustomColorChanged;
   final Uint8List? processedBytes;
   final VoidCallback onExport;
   final VoidCallback onPickImage;
@@ -42,6 +45,8 @@ class ControlsPanel extends StatelessWidget {
     required this.onSmoothnessChangeEnd,
     required this.previewBackground,
     required this.onBackgroundChanged,
+    required this.customPreviewColor,
+    required this.onCustomColorChanged,
     required this.processedBytes,
     required this.onExport,
     required this.onPickImage,
@@ -268,7 +273,30 @@ class ControlsPanel extends StatelessWidget {
               _buildBackgroundOption('black', Icons.nightlight_round, 'Dark'),
             ],
           ),
-          const SizedBox(height: 36),
+          const SizedBox(height: 16),
+          const Text(
+            'CHROMA KEY',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+              color: AppTheme.textMuted,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildChromaCircle('red', const Color(0xFFEF4444), 'Red'),
+              _buildChromaCircle('green', const Color(0xFF22C55E), 'Green'),
+              _buildChromaCircle('blue', const Color(0xFF3B82F6), 'Blue'),
+              _buildChromaCircle('white', Colors.white, 'White'),
+              _buildChromaCircle('black', Colors.black, 'Black'),
+              _buildCustomChromaCircle(context),
+            ],
+          ),
+          const SizedBox(height: 30),
 
           // Action Buttons
           DecoratedBox(
@@ -360,5 +388,97 @@ class ControlsPanel extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildChromaCircle(String value, Color color, String tooltip) {
+    final bool isSelected = previewBackground == value;
+
+    return Tooltip(
+      message: 'Preview on $tooltip background',
+      child: GestureDetector(
+        onTap: () => onBackgroundChanged(value),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected ? Colors.white : AppTheme.surfaceLight,
+              width: isSelected ? 2.5 : 1.5,
+            ),
+            boxShadow: [
+              if (isSelected)
+                BoxShadow(
+                  color: color.withValues(alpha: 0.5),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+            ],
+          ),
+          child: isSelected
+              ? const Icon(
+                  Icons.check_rounded,
+                  color: Colors.white,
+                  size: 14,
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomChromaCircle(BuildContext context) {
+    final bool isSelected = previewBackground == 'custom';
+
+    return Tooltip(
+      message: 'Choose custom background color',
+      child: GestureDetector(
+        onTap: () => _openColorPicker(context),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: isSelected ? customPreviewColor : AppTheme.surfaceDark,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected ? Colors.white : AppTheme.surfaceLight,
+              width: isSelected ? 2.5 : 1.5,
+            ),
+            boxShadow: [
+              if (isSelected)
+                BoxShadow(
+                  color: customPreviewColor.withValues(alpha: 0.5),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+            ],
+          ),
+          child: Icon(
+            Icons.palette_rounded,
+            color: isSelected
+                ? (customPreviewColor.computeLuminance() > 0.5
+                    ? Colors.black
+                    : Colors.white)
+                : AppTheme.textSecondary,
+            size: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openColorPicker(BuildContext context) async {
+    final Color? pickedColor = await showDialog<Color>(
+      context: context,
+      builder: (context) =>
+          CustomColorPickerDialog(initialColor: customPreviewColor),
+    );
+    if (pickedColor != null) {
+      onCustomColorChanged(pickedColor);
+      onBackgroundChanged('custom');
+    }
   }
 }
