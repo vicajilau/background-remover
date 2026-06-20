@@ -107,4 +107,4 @@ msix_config:
   logo_path: .github\assets\logo_transparent.png
   capabilities: internetClient
   store: true
-  languages: ar-SA, ca-ES, de-DE, el-GR, en-GB, es-ES, eu-ES, fr-FR, gl-ES, hi-IN, it-IT, ja-JP, ka-GE, ko-KR, pt-BR, ru-RU, uk-UA, zh-CN
+  languages: ar-SA, ca-ES, de-DE, el-GR, en-US, es-ES, eu-ES, fr-FR, gl-ES, hi-IN, it-IT, ja-JP, ka-GE, ko-KR, pt-PT, ru-RU, uk-UA, zh-CN
