@@ -48,3 +48,13 @@ app.*.map.json
 # Generated localization files
 lib/l10n/app_localizations*.dart
 lib/l10n/untranslated_messages.json
+
+# Generated Google Play release notes
+/distribution/android/whatsnew/
+
+# Generated Apple Store release notes (Fastlane metadata)
+/distribution/apple/fastlane/metadata/
+
+# Generated Windows release notes metadata
+/distribution/windows/current_metadata.json
+/distribution/windows/update_metadata.json

@@ -127,26 +127,40 @@ Map<String, dynamic> _readConfig(File notesFile) {
 String _resolveVersion(String? versionArg) {
   final String? versionFromArg = versionArg?.trim();
   if (versionFromArg != null && versionFromArg.isNotEmpty) {
-    return _normalizeVersion(versionFromArg);
+    final String? normalized = _tryNormalizeVersion(versionFromArg);
+    if (normalized != null) {
+      return normalized;
+    }
   }
 
   final String? refName = Platform.environment['GITHUB_REF_NAME']?.trim();
   if (refName != null && refName.isNotEmpty) {
-    return _normalizeVersion(refName);
+    final String? normalized = _tryNormalizeVersion(refName);
+    if (normalized != null) {
+      return normalized;
+    }
   }
 
   return _readVersionFromPubspec();
 }
 
-String _normalizeVersion(String raw) {
+String? _tryNormalizeVersion(String raw) {
   final String candidate = raw.startsWith('v') ? raw.substring(1) : raw;
   final String clean = candidate.split('+').first;
   if (!RegExp(
     r'^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$',
   ).hasMatch(clean)) {
-    _fail('Invalid version value: "$raw"');
+    return null;
   }
   return clean;
+}
+
+String _normalizeVersion(String raw) {
+  final String? normalized = _tryNormalizeVersion(raw);
+  if (normalized == null) {
+    _fail('Invalid version value: "$raw"');
+  }
+  return normalized;
 }
 
 String _readVersionFromPubspec() {
