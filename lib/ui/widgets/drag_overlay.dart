@@ -1,5 +1,6 @@
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
 import '../theme.dart';
 
 /// A premium glassmorphic overlay displayed when files are dragged over the window.
@@ -8,6 +9,8 @@ class DragOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Positioned.fill(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -45,18 +48,18 @@ class DragOverlay extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Drop your image here',
-                    style: TextStyle(
+                  Text(
+                    l10n.dropImage,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Supports PNG, JPG, JPEG, and WebP formats',
-                    style: TextStyle(
+                  Text(
+                    l10n.dropImageSubtitle,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppTheme.textSecondary,
                     ),

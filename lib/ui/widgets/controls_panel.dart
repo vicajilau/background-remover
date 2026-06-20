@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
+import '../../core/enums.dart';
 import '../theme.dart';
 import 'custom_color_picker_dialog.dart';
 
@@ -8,8 +10,8 @@ class ControlsPanel extends StatelessWidget {
   final String? fileName;
   final double imageWidth;
   final double imageHeight;
-  final String viewMode;
-  final ValueChanged<String> onViewModeChanged;
+  final ViewMode viewMode;
+  final ValueChanged<ViewMode> onViewModeChanged;
   final Color selectedColor;
   final bool isEyedropperActive;
   final VoidCallback onToggleEyedropper;
@@ -19,8 +21,8 @@ class ControlsPanel extends StatelessWidget {
   final double smoothness;
   final ValueChanged<double> onSmoothnessChanged;
   final ValueChanged<double> onSmoothnessChangeEnd;
-  final String previewBackground;
-  final ValueChanged<String> onBackgroundChanged;
+  final PreviewBackground previewBackground;
+  final ValueChanged<PreviewBackground> onBackgroundChanged;
   final Color customPreviewColor;
   final ValueChanged<Color> onCustomColorChanged;
   final Uint8List? processedBytes;
@@ -54,6 +56,8 @@ class ControlsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -73,7 +77,7 @@ class ControlsPanel extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Resolution: ${imageWidth.toInt()} x ${imageHeight.toInt()}',
+              l10n.resolution(imageWidth.toInt(), imageHeight.toInt()),
               style: const TextStyle(
                 fontSize: 12,
                 color: AppTheme.textSecondary,
@@ -83,9 +87,9 @@ class ControlsPanel extends StatelessWidget {
           ],
 
           // View Mode Toggle Tabs
-          const Text(
-            'VIEW MODE',
-            style: TextStyle(
+          Text(
+            l10n.viewMode,
+            style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
@@ -93,17 +97,17 @@ class ControlsPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          SegmentedButton<String>(
-            segments: const [
+          SegmentedButton<ViewMode>(
+            segments: [
               ButtonSegment(
-                value: 'split',
-                label: Text('Compare'),
-                icon: Icon(Icons.compare_arrows_rounded),
+                value: ViewMode.split,
+                label: Text(l10n.compare),
+                icon: const Icon(Icons.compare_arrows_rounded),
               ),
               ButtonSegment(
-                value: 'processed',
-                label: Text('Result'),
-                icon: Icon(Icons.done_all_rounded),
+                value: ViewMode.processed,
+                label: Text(l10n.result),
+                icon: const Icon(Icons.done_all_rounded),
               ),
             ],
             selected: {viewMode},
@@ -115,9 +119,9 @@ class ControlsPanel extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Color Picker Section
-          const Text(
-            'COLOR TO REMOVE',
-            style: TextStyle(
+          Text(
+            l10n.colorToRemove,
+            style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
@@ -167,9 +171,9 @@ class ControlsPanel extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'Target Background Color',
-                        style: TextStyle(
+                      Text(
+                        l10n.targetBgColor,
+                        style: const TextStyle(
                           fontSize: 11,
                           color: AppTheme.textSecondary,
                         ),
@@ -179,7 +183,7 @@ class ControlsPanel extends StatelessWidget {
                 ),
                 // Eyedropper Button
                 IconButton(
-                  tooltip: 'Eyedropper tool',
+                  tooltip: l10n.eyedropperTooltip,
                   icon: Icon(
                     Icons.colorize_rounded,
                     color: isEyedropperActive ? AppTheme.primary : Colors.white,
@@ -192,9 +196,9 @@ class ControlsPanel extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Parameters Sliders
-          const Text(
-            'ADJUSTMENTS',
-            style: TextStyle(
+          Text(
+            l10n.adjustments,
+            style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
@@ -207,7 +211,7 @@ class ControlsPanel extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Tolerance'),
+              Text(l10n.tolerance),
               Text(
                 threshold.toInt().toString(),
                 style: const TextStyle(
@@ -230,7 +234,7 @@ class ControlsPanel extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Smoothness'),
+              Text(l10n.smoothness),
               Text(
                 smoothness.toInt().toString(),
                 style: const TextStyle(
@@ -250,9 +254,9 @@ class ControlsPanel extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Background Previews
-          const Text(
-            'BACKGROUND CHECK',
-            style: TextStyle(
+          Text(
+            l10n.bgCheck,
+            style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
@@ -263,20 +267,28 @@ class ControlsPanel extends StatelessWidget {
           Row(
             children: [
               _buildBackgroundOption(
-                'transparent',
+                PreviewBackground.transparent,
                 Icons.grid_on_rounded,
-                'Grid',
+                l10n.grid,
               ),
               const SizedBox(width: 8),
-              _buildBackgroundOption('white', Icons.wb_sunny_rounded, 'Light'),
+              _buildBackgroundOption(
+                PreviewBackground.white,
+                Icons.wb_sunny_rounded,
+                l10n.light,
+              ),
               const SizedBox(width: 8),
-              _buildBackgroundOption('black', Icons.nightlight_round, 'Dark'),
+              _buildBackgroundOption(
+                PreviewBackground.black,
+                Icons.nightlight_round,
+                l10n.dark,
+              ),
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'CHROMA KEY',
-            style: TextStyle(
+          Text(
+            l10n.chromaKey,
+            style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
@@ -288,11 +300,36 @@ class ControlsPanel extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildChromaCircle('red', const Color(0xFFEF4444), 'Red'),
-              _buildChromaCircle('green', const Color(0xFF22C55E), 'Green'),
-              _buildChromaCircle('blue', const Color(0xFF3B82F6), 'Blue'),
-              _buildChromaCircle('white', Colors.white, 'White'),
-              _buildChromaCircle('black', Colors.black, 'Black'),
+              _buildChromaCircle(
+                context,
+                PreviewBackground.red,
+                const Color(0xFFEF4444),
+                l10n.red,
+              ),
+              _buildChromaCircle(
+                context,
+                PreviewBackground.green,
+                const Color(0xFF22C55E),
+                l10n.green,
+              ),
+              _buildChromaCircle(
+                context,
+                PreviewBackground.blue,
+                const Color(0xFF3B82F6),
+                l10n.blue,
+              ),
+              _buildChromaCircle(
+                context,
+                PreviewBackground.white,
+                Colors.white,
+                l10n.white,
+              ),
+              _buildChromaCircle(
+                context,
+                PreviewBackground.black,
+                Colors.black,
+                l10n.black,
+              ),
               _buildCustomChromaCircle(context),
             ],
           ),
@@ -314,14 +351,14 @@ class ControlsPanel extends StatelessWidget {
                 shadowColor: Colors.transparent,
                 minimumSize: const Size.fromHeight(56),
               ),
-              child: const FittedBox(
+              child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.download_rounded),
-                    SizedBox(width: 10),
-                    Text('Save Transparent PNG'),
+                    const Icon(Icons.download_rounded),
+                    const SizedBox(width: 10),
+                    Text(l10n.savePng),
                   ],
                 ),
               ),
@@ -333,14 +370,14 @@ class ControlsPanel extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(56),
             ),
-            child: const FittedBox(
+            child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.folder_open),
-                  SizedBox(width: 10),
-                  Text('Open Another Image'),
+                  const Icon(Icons.folder_open),
+                  const SizedBox(width: 10),
+                  Text(l10n.openImage),
                 ],
               ),
             ),
@@ -350,7 +387,11 @@ class ControlsPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildBackgroundOption(String value, IconData icon, String label) {
+  Widget _buildBackgroundOption(
+    PreviewBackground value,
+    IconData icon,
+    String label,
+  ) {
     final bool isSelected = previewBackground == value;
 
     return Expanded(
@@ -390,11 +431,16 @@ class ControlsPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildChromaCircle(String value, Color color, String tooltip) {
+  Widget _buildChromaCircle(
+    BuildContext context,
+    PreviewBackground value,
+    Color color,
+    String tooltip,
+  ) {
     final bool isSelected = previewBackground == value;
 
     return Tooltip(
-      message: 'Preview on $tooltip background',
+      message: AppLocalizations.of(context).previewOnBg(tooltip),
       child: GestureDetector(
         onTap: () => onBackgroundChanged(value),
         child: AnimatedContainer(
@@ -411,7 +457,7 @@ class ControlsPanel extends StatelessWidget {
             boxShadow: [
               if (isSelected)
                 BoxShadow(
-                  color: color.withValues(alpha: 0.5),
+                  color: color.withAlpha(50),
                   blurRadius: 8,
                   spreadRadius: 1,
                 ),
@@ -426,10 +472,10 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildCustomChromaCircle(BuildContext context) {
-    final bool isSelected = previewBackground == 'custom';
+    final bool isSelected = previewBackground == PreviewBackground.custom;
 
     return Tooltip(
-      message: 'Choose custom background color',
+      message: AppLocalizations.of(context).customBgTooltip,
       child: GestureDetector(
         onTap: () => _openColorPicker(context),
         child: AnimatedContainer(
@@ -446,7 +492,7 @@ class ControlsPanel extends StatelessWidget {
             boxShadow: [
               if (isSelected)
                 BoxShadow(
-                  color: customPreviewColor.withValues(alpha: 0.5),
+                  color: customPreviewColor.withAlpha(50),
                   blurRadius: 8,
                   spreadRadius: 1,
                 ),
@@ -474,7 +520,7 @@ class ControlsPanel extends StatelessWidget {
     );
     if (pickedColor != null) {
       onCustomColorChanged(pickedColor);
-      onBackgroundChanged('custom');
+      onBackgroundChanged(PreviewBackground.custom);
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
 
 /// A custom clipper to show either the left or right portion of a widget.
 class _SplitClipper extends CustomClipper<Rect> {
@@ -56,6 +57,7 @@ class _SplitSliderState extends State<SplitSlider> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isInteractive = _isHovering || _isDragging;
+    final l10n = AppLocalizations.of(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -195,9 +197,9 @@ class _SplitSliderState extends State<SplitSlider> {
                             width: 1,
                           ),
                         ),
-                        child: const Text(
-                          'PROCESSED',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.processed.toUpperCase(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -227,9 +229,9 @@ class _SplitSliderState extends State<SplitSlider> {
                             width: 1,
                           ),
                         ),
-                        child: const Text(
-                          'ORIGINAL',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.original.toUpperCase(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w700,

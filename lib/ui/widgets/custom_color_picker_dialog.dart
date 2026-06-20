@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
 import '../theme.dart';
 
 /// A dialog that allows users to pick a custom color using preselected palettes or a color wheel.
@@ -24,6 +25,8 @@ class _CustomColorPickerDialogState extends State<CustomColorPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Dialog(
       backgroundColor: AppTheme.surface,
       shape: RoundedRectangleBorder(
@@ -37,9 +40,9 @@ class _CustomColorPickerDialogState extends State<CustomColorPickerDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Custom Background',
-              style: TextStyle(
+            Text(
+              l10n.customBgTitle,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.textPrimary,
@@ -63,25 +66,25 @@ class _CustomColorPickerDialogState extends State<CustomColorPickerDialog> {
                   spacing: 6,
                   runSpacing: 6,
                   wheelDiameter: 180,
-                  heading: const Text(
-                    'Select background color',
-                    style: TextStyle(
+                  heading: Text(
+                    l10n.selectBgColor,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textSecondary,
                     ),
                   ),
-                  subheading: const Text(
-                    'Select color shade',
-                    style: TextStyle(
+                  subheading: Text(
+                    l10n.selectColorShade,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textSecondary,
                     ),
                   ),
-                  wheelSubheading: const Text(
-                    'Custom color shade',
-                    style: TextStyle(
+                  wheelSubheading: Text(
+                    l10n.customColorShade,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textSecondary,
@@ -94,9 +97,9 @@ class _CustomColorPickerDialogState extends State<CustomColorPickerDialog> {
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                   ),
-                  pickerTypeLabels: const <ColorPickerType, String>{
-                    ColorPickerType.both: 'Presets',
-                    ColorPickerType.wheel: 'Wheel',
+                  pickerTypeLabels: <ColorPickerType, String>{
+                    ColorPickerType.both: l10n.presets,
+                    ColorPickerType.wheel: l10n.wheel,
                   },
                   pickersEnabled: const <ColorPickerType, bool>{
                     ColorPickerType.both: true,
@@ -117,7 +120,7 @@ class _CustomColorPickerDialogState extends State<CustomColorPickerDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
@@ -131,7 +134,7 @@ class _CustomColorPickerDialogState extends State<CustomColorPickerDialog> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text('Select'),
+                  child: Text(l10n.select),
                 ),
               ],
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
 import '../theme.dart';
 
 /// The initial screen content inviting the user to pick or drop an image.
@@ -9,6 +10,8 @@ class UploadPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -56,20 +59,20 @@ class UploadPrompt extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        'Load Image to Remove Background',
+                      Text(
+                        l10n.loadImageTitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'Supports PNG, JPG, JPEG, and WebP',
+                      Text(
+                        l10n.loadImageSubtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: AppTheme.textSecondary,
                         ),
@@ -78,7 +81,7 @@ class UploadPrompt extends StatelessWidget {
                       ElevatedButton.icon(
                         onPressed: onPickImage,
                         icon: const Icon(Icons.file_upload),
-                        label: const Text('Choose File'),
+                        label: Text(l10n.chooseFile),
                       ),
                     ],
                   ),

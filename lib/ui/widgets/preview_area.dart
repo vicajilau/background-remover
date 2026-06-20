@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:background_remover/core/image_processor.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
+import '../../core/enums.dart';
 import 'checkerboard.dart';
 import 'split_slider.dart';
 
@@ -11,8 +13,8 @@ class PreviewArea extends StatefulWidget {
   final DecodedImage? decodedImg;
   final double imageWidth;
   final double imageHeight;
-  final String viewMode;
-  final String previewBackground;
+  final ViewMode viewMode;
+  final PreviewBackground previewBackground;
   final Color customPreviewColor;
   final bool isEyedropperActive;
   final bool isProcessing;
@@ -142,16 +144,22 @@ class _PreviewAreaState extends State<PreviewArea>
         children: [
           // Checkerboard / Solid color backgrounds
           Positioned.fill(
-            child: widget.previewBackground == 'transparent'
+            child: widget.previewBackground == PreviewBackground.transparent
                 ? const Checkerboard()
                 : Container(
                     color: switch (widget.previewBackground) {
-                      'white' => Colors.white,
-                      'black' => Colors.black,
-                      'red' => const Color(0xFFEF4444), // Tailwind Red 500
-                      'green' => const Color(0xFF22C55E), // Tailwind Green 500
-                      'blue' => const Color(0xFF3B82F6), // Tailwind Blue 500
-                      'custom' => widget.customPreviewColor,
+                      PreviewBackground.white => Colors.white,
+                      PreviewBackground.black => Colors.black,
+                      PreviewBackground.red => const Color(
+                        0xFFEF4444,
+                      ), // Tailwind Red 500
+                      PreviewBackground.green => const Color(
+                        0xFF22C55E,
+                      ), // Tailwind Green 500
+                      PreviewBackground.blue => const Color(
+                        0xFF3B82F6,
+                      ), // Tailwind Blue 500
+                      PreviewBackground.custom => widget.customPreviewColor,
                       _ => Colors.transparent,
                     },
                   ),
@@ -210,19 +218,21 @@ class _PreviewAreaState extends State<PreviewArea>
                                         color: Colors.black.withValues(
                                           alpha: 0.4,
                                         ),
-                                        child: const Center(
+                                        child: Center(
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon(
+                                              const Icon(
                                                 Icons.colorize,
                                                 size: 40,
                                                 color: Colors.white,
                                               ),
-                                              SizedBox(height: 8),
+                                              const SizedBox(height: 8),
                                               Text(
-                                                'Tap anywhere to pick background color',
-                                                style: TextStyle(
+                                                AppLocalizations.of(
+                                                  context,
+                                                ).tapToPickColor,
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
                                                   shadows: [
@@ -246,7 +256,7 @@ class _PreviewAreaState extends State<PreviewArea>
 
                           // Normal View Modes
                           switch (widget.viewMode) {
-                            case 'original':
+                            case ViewMode.original:
                               return Center(
                                 child: AspectRatio(
                                   aspectRatio: imageRatio,
@@ -263,7 +273,7 @@ class _PreviewAreaState extends State<PreviewArea>
                                   ),
                                 ),
                               );
-                            case 'processed':
+                            case ViewMode.processed:
                               return Center(
                                 child: AspectRatio(
                                   aspectRatio: imageRatio,
@@ -280,8 +290,7 @@ class _PreviewAreaState extends State<PreviewArea>
                                   ),
                                 ),
                               );
-                            case 'split':
-                            default:
+                            case ViewMode.split:
                               return SplitSlider(
                                 original: originalImgWidget,
                                 processed: processedImgWidget,
@@ -298,7 +307,7 @@ class _PreviewAreaState extends State<PreviewArea>
           ),
 
           // Zoom Instruction Tooltip (Fades out when zoomed or during split/eyedropper modes)
-          if (widget.viewMode != 'split' &&
+          if (widget.viewMode != ViewMode.split &&
               !widget.isEyedropperActive &&
               widget.processedBytes != null)
             Positioned(
@@ -330,8 +339,8 @@ class _PreviewAreaState extends State<PreviewArea>
                         Text(
                           theme.platform == TargetPlatform.iOS ||
                                   theme.platform == TargetPlatform.android
-                              ? 'Pinch to zoom • Double-tap to quick zoom • Drag to pan'
-                              : 'Ctrl + Scroll to zoom • Drag to pan • Double-click to quick zoom',
+                              ? AppLocalizations.of(context).zoomTooltipMobile
+                              : AppLocalizations.of(context).zoomTooltipDesktop,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -371,7 +380,7 @@ class _PreviewAreaState extends State<PreviewArea>
                     Text(
                       widget.loadingStatus.isNotEmpty
                           ? widget.loadingStatus
-                          : 'Processing...',
+                          : AppLocalizations.of(context).processing,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

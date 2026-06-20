@@ -6,6 +6,8 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:cross_file/cross_file.dart';
 
 import '../../core/image_processor.dart';
+import 'package:background_remover/l10n/app_localizations.dart';
+import '../../core/enums.dart';
 import '../theme.dart';
 import '../widgets/drag_overlay.dart';
 import '../widgets/upload_prompt.dart';
@@ -37,8 +39,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // UI state
   bool _isProcessing = false;
   bool _isEyedropperActive = false;
-  String _viewMode = 'split'; // 'split', 'original', 'processed'
-  String _previewBackground = 'transparent'; // 'transparent', 'white', 'black'
+  ViewMode _viewMode = ViewMode.split;
+  PreviewBackground _previewBackground = PreviewBackground.transparent;
   Color _customPreviewColor = const Color(
     0xFF8B5CF6,
   ); // Default custom color (Purple)
@@ -54,6 +56,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   set threshold(double val) => setState(() => _threshold = val);
   set smoothness(double val) => setState(() => _smoothness = val);
 
+  String _getLoadingStatusText(BuildContext context) {
+    if (_loadingStatus.isEmpty) return '';
+    final l10n = AppLocalizations.of(context);
+    switch (_loadingStatus) {
+      case 'loading_file':
+        return l10n.loadingFile;
+      case 'decoding_image':
+        return l10n.decodingImage;
+      case 'removing_background':
+        return l10n.removingBackground;
+      case 'processing_image':
+        return l10n.processing;
+      default:
+        return _loadingStatus;
+    }
+  }
+
   /// Prompts the user to pick an image file.
   Future<void> _pickImage() async {
     try {
@@ -66,7 +85,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       await loadImage(result.xFile);
     } catch (e) {
-      _showSnackBar('Error picking image: ${e.toString()}', isError: true);
+      if (mounted) {
+        _showSnackBar(
+          AppLocalizations.of(context).errorPickingImage(e.toString()),
+          isError: true,
+        );
+      }
     }
   }
 
@@ -77,7 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       setState(() {
         _isProcessing = true;
-        _loadingStatus = 'Loading file...';
+        _loadingStatus = 'loading_file';
         _originalBytes = null;
         _processedBytes = null;
         _fileName = file.name;
@@ -94,7 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       setState(() {
         _originalBytes = bytes;
-        _loadingStatus = 'Decoding image...';
+        _loadingStatus = 'decoding_image';
       });
 
       // Decode the image in a background thread to get size and pixels
@@ -115,7 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _imageWidth = decoded.width.toDouble();
         _imageHeight = decoded.height.toDouble();
         _selectedColor = initialColor;
-        _loadingStatus = 'Processing image...';
+        _loadingStatus = 'processing_image';
       });
 
       print(
@@ -124,7 +148,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _processImage();
     } catch (e) {
       print('[ImageLoader] ❌ Error loading image: ${e.toString()}');
-      _showSnackBar('Error loading image: ${e.toString()}', isError: true);
+      if (mounted) {
+        _showSnackBar(
+          AppLocalizations.of(context).errorLoadingImage(e.toString()),
+          isError: true,
+        );
+      }
       setState(() {
         _isProcessing = false;
         _loadingStatus = '';
@@ -144,7 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     setState(() {
       _isProcessing = true;
-      _loadingStatus = 'Removing background...';
+      _loadingStatus = 'removing_background';
     });
 
     if (currentId != _processCounter) {
@@ -185,10 +214,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _isProcessing = false;
           _loadingStatus = '';
         });
-        _showSnackBar(
-          'Error processing background removal: ${e.toString()}',
-          isError: true,
-        );
+        if (mounted) {
+          _showSnackBar(
+            AppLocalizations.of(context).errorProcessing(e.toString()),
+            isError: true,
+          );
+        }
       }
     }
   }
@@ -245,7 +276,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
 
       _processImage();
-      _showSnackBar('Color picked successfully!');
+      if (mounted) {
+        _showSnackBar(AppLocalizations.of(context).successColorPicked);
+      }
     }
   }
 
@@ -260,17 +293,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final outputName = '${_fileName!.split('.').first}_transparent.png';
     try {
       final savedPath = await FilePicker.saveFile(
-        dialogTitle: 'Save Transparent Image',
+        dialogTitle: AppLocalizations.of(context).saveDialogTitle,
         fileName: outputName,
         type: FileType.custom,
         allowedExtensions: ['png'],
         bytes: _processedBytes!,
       );
-      if (savedPath != null) {
-        _showSnackBar('Image saved successfully: $savedPath');
+      if (savedPath != null && mounted) {
+        _showSnackBar(AppLocalizations.of(context).successSaving(savedPath));
       }
     } catch (e) {
-      _showSnackBar('Failed to save image: ${e.toString()}', isError: true);
+      if (mounted) {
+        _showSnackBar(
+          AppLocalizations.of(context).errorSaving(e.toString()),
+          isError: true,
+        );
+      }
     } finally {
       setState(() {
         _isProcessing = false;
@@ -292,8 +330,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
       _threshold = 30.0;
       _smoothness = 20.0;
-      _viewMode = 'split';
-      _previewBackground = 'transparent';
+      _viewMode = ViewMode.split;
+      _previewBackground = PreviewBackground.transparent;
       _customPreviewColor = const Color(0xFF8B5CF6);
       _isEyedropperActive = false;
       _processedBytes = null;
@@ -321,14 +359,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth >= 800;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Background Remover'),
+        title: Text(l10n.appTitle),
         actions: [
           if (_originalBytes != null)
             IconButton(
-              tooltip: 'Reset adjustments',
+              tooltip: l10n.resetTooltip,
               icon: const Icon(Icons.refresh),
               onPressed: resetAll,
             ),
@@ -368,10 +407,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (hasValidExtension || hasValidMimeType) {
               await loadImage(file);
             } else {
-              _showSnackBar(
-                'Unsupported file format. Please drop PNG, JPG, JPEG, or WebP.',
-                isError: true,
-              );
+              if (mounted) {
+                _showSnackBar(l10n.unsupportedFormat, isError: true);
+              }
             }
           }
         },
@@ -390,8 +428,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           const SizedBox(height: 16),
                           Text(
                             _loadingStatus.isNotEmpty
-                                ? _loadingStatus
-                                : 'Loading and decoding image...',
+                                ? _getLoadingStatusText(context)
+                                : l10n.processing,
                             style: const TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 16,
@@ -418,7 +456,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             customPreviewColor: _customPreviewColor,
                             isEyedropperActive: _isEyedropperActive,
                             isProcessing: _isProcessing,
-                            loadingStatus: _loadingStatus,
+                            loadingStatus: _getLoadingStatusText(context),
                             onPickColorAt: _pickColorAt,
                           ),
                         ),
@@ -473,7 +511,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             customPreviewColor: _customPreviewColor,
                             isEyedropperActive: _isEyedropperActive,
                             isProcessing: _isProcessing,
-                            loadingStatus: _loadingStatus,
+                            loadingStatus: _getLoadingStatusText(context),
                             onPickColorAt: _pickColorAt,
                           ),
                         ),

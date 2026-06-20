@@ -1,0 +1,111 @@
+{
+  "@@locale": "en",
+  "appTitle": "Background Remover",
+  "resetTooltip": "Reset adjustments",
+  "resolution": "Resolution: {w} x {h}",
+  "@resolution": {
+    "placeholders": {
+      "w": {
+        "type": "num"
+      },
+      "h": {
+        "type": "num"
+      }
+    }
+  },
+  "viewMode": "VIEW MODE",
+  "compare": "Compare",
+  "result": "Result",
+  "colorToRemove": "COLOR TO REMOVE",
+  "targetBgColor": "Target Background Color",
+  "eyedropperTooltip": "Eyedropper tool",
+  "adjustments": "ADJUSTMENTS",
+  "tolerance": "Tolerance",
+  "smoothness": "Smoothness",
+  "bgCheck": "BACKGROUND CHECK",
+  "grid": "Grid",
+  "light": "Light",
+  "dark": "Dark",
+  "chromaKey": "CHROMA KEY",
+  "red": "Red",
+  "green": "Green",
+  "blue": "Blue",
+  "white": "White",
+  "black": "Black",
+  "previewOnBg": "Preview on {color} background",
+  "@previewOnBg": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "customBgTooltip": "Choose custom background color",
+  "savePng": "Save Transparent PNG",
+  "openImage": "Open Another Image",
+  "customBgTitle": "Custom Background",
+  "selectBgColor": "Select background color",
+  "selectColorShade": "Select color shade",
+  "customColorShade": "Custom color shade",
+  "presets": "Presets",
+  "wheel": "Wheel",
+  "cancel": "Cancel",
+  "select": "Select",
+  "loadImageTitle": "Load Image to Remove Background",
+  "loadImageSubtitle": "Supports PNG, JPG, JPEG and WebP",
+  "chooseFile": "Choose File",
+  "dropImage": "Drop your image here",
+  "dropImageSubtitle": "Supports PNG, JPG, JPEG, and WebP formats",
+  "tapToPickColor": "Tap anywhere to pick background color",
+  "zoomTooltipMobile": "Pinch to zoom • Double-tap to quick zoom • Drag to pan",
+  "zoomTooltipDesktop": "Ctrl + Scroll to zoom • Drag to pan • Double-click to quick zoom",
+  "processing": "Processing...",
+  "loadingFile": "Loading file...",
+  "decodingImage": "Decoding image...",
+  "removingBackground": "Removing background...",
+  "errorPickingImage": "Error picking image: {error}",
+  "@errorPickingImage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadingImage": "Error loading image: {error}",
+  "@errorLoadingImage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorProcessing": "Error processing background removal: {error}",
+  "@errorProcessing": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSaving": "Failed to save image: {error}",
+  "@errorSaving": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "successSaving": "Image saved successfully: {path}",
+  "@successSaving": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "successColorPicked": "Color picked successfully!",
+  "unsupportedFormat": "Unsupported file format. Please drop PNG, JPG, JPEG, or WebP.",
+  "saveDialogTitle": "Save Transparent Image",
+  "original": "Original",
+  "processed": "Processed"
+}
