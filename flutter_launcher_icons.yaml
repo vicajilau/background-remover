@@ -10,7 +10,7 @@ flutter_launcher_icons:
     theme_color: "#1e293b"
   windows:
     generate: true
-    image_path: ".github/assets/logo.png"
+    image_path: ".github/assets/logo_transparent.png"
   macos:
     generate: true
     image_path: ".github/assets/logo.png"
