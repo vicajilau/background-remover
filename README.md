@@ -1,8 +1,8 @@
-# Background Remover
+# Unback: Background Remover
 
 <p align="center">
   <img src=".github/assets/logo_transparent.png" alt="Background Remover Logo" width="160"><br><br>
-  <img src="https://github.com/vicajilau/background-remover/actions/workflows/ci.yaml/badge.svg" alt="CI/CD Status">
+  <img src="https://github.com/vicajilau/unback/actions/workflows/ci.yaml/badge.svg" alt="CI/CD Status">
 </p>
 
 The open-source companion for all your image processing needs in Flutter. 
@@ -86,8 +86,8 @@ Ensure you have the latest stable **Flutter SDK** installed on your machine.
 Clone the repository and resolve dependencies:
 
 ```bash
-git clone [https://github.com/vicajilau/background-remover.git](https://github.com/vicajilau/background-remover.git)
-cd background-remover
+git clone [https://github.com/vicajilau/unback.git](https://github.com/vicajilau/unback.git)
+cd unback
 
 # Fetch dependencies
 flutter pub get
