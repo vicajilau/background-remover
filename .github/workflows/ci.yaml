@@ -38,16 +38,17 @@ jobs:
 
       - name: 🌐 Check for untranslated messages
         run: |
-          content=$(cat untranslated_messages.json)
+          content=$(cat lib/l10n/untranslated_messages.json)
           if [ "$content" = "{}" ]; then
             echo "✅ All translations are complete!"
           else
             echo "❌ Found untranslated messages:"
-            cat untranslated_messages.json
+            cat lib/l10n/untranslated_messages.json
             echo ""
             echo "Please add the missing translations to the corresponding .arb files"
             exit 1
           fi
+        shell: bash
 
       - name: 🧪 Run Tests
         run: flutter test
