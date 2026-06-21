@@ -105,7 +105,6 @@ msix_config:
   publisher: CN=B0585DC6-ACE7-4F2B-956B-CDC4AFBAFCCF
   publisher_display_name: vicajilau
   logo_path: .github\assets\logo_transparent.png
-  capabilities: internetClient
   store: true
   languages: ar, ca, de, el, en, es, eu, fr, gl, hi, it, ja, ka, ko, pt, ru, uk, zh
   output_name: unback
