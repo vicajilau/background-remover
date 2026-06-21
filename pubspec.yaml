@@ -100,12 +100,12 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 msix_config:
-  display_name: Unback
+  display_name: "Unback: Background Remover"
   identity_name: vicajilau.UnbackBackgroundRemover
   publisher: CN=B0585DC6-ACE7-4F2B-956B-CDC4AFBAFCCF
   publisher_display_name: vicajilau
   logo_path: .github\assets\logo_transparent.png
   capabilities: internetClient
   store: true
-  languages: ar-SA, ca-ES, de-DE, el-GR, en-US, es-ES, eu-ES, fr-FR, gl-ES, hi-IN, it-IT, ja-JP, ka-GE, ko-KR, pt-PT, ru-RU, uk-UA, zh-CN
+  languages: ar, ca, de, el, en, es, eu, fr, gl, hi, it, ja, ka, ko, pt, ru, uk, zh
   output_name: unback
