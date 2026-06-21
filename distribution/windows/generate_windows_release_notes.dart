@@ -93,6 +93,23 @@ void main(List<String> args) {
     currentMetadata[categoryKey] = 'PhotoAndVideo';
   }
 
+  final String allowTargetKey = currentMetadata.keys.firstWhere(
+    (k) => k.toLowerCase() == 'allowtargetfuturedevicefamilies',
+    orElse: () => 'allowTargetFutureDeviceFamilies',
+  );
+  currentMetadata[allowTargetKey] ??= <String, dynamic>{};
+  if (currentMetadata[allowTargetKey] is Map<String, dynamic>) {
+    final Map<String, dynamic> allowTarget = currentMetadata[allowTargetKey] as Map<String, dynamic>;
+    final String desktopKey = allowTarget.keys.firstWhere((k) => k.toLowerCase() == 'desktop', orElse: () => 'Desktop');
+    allowTarget[desktopKey] ??= false;
+    final String mobileKey = allowTarget.keys.firstWhere((k) => k.toLowerCase() == 'mobile', orElse: () => 'Mobile');
+    allowTarget[mobileKey] ??= false;
+    final String xboxKey = allowTarget.keys.firstWhere((k) => k.toLowerCase() == 'xbox', orElse: () => 'Xbox');
+    allowTarget[xboxKey] ??= false;
+    final String holoKey = allowTarget.keys.firstWhere((k) => k.toLowerCase() == 'holographic', orElse: () => 'Holographic');
+    allowTarget[holoKey] ??= false;
+  }
+
   final String listingsKey = currentMetadata.keys.firstWhere(
     (k) => k.toLowerCase() == 'listings',
     orElse: () => 'listings',
