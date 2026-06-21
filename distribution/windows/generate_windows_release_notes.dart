@@ -85,6 +85,14 @@ void main(List<String> args) {
   }
   final Map<String, dynamic> currentMetadata = decoded;
 
+  final String categoryKey = currentMetadata.keys.firstWhere(
+    (k) => k.toLowerCase() == 'applicationcategory',
+    orElse: () => 'applicationCategory',
+  );
+  if (currentMetadata[categoryKey] == 'NotSet' || currentMetadata[categoryKey] == null) {
+    currentMetadata[categoryKey] = 'PhotoAndVideo';
+  }
+
   final String listingsKey = currentMetadata.keys.firstWhere(
     (k) => k.toLowerCase() == 'listings',
     orElse: () => 'listings',
